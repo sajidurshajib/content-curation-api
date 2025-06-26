@@ -1,7 +1,8 @@
 from fastapi import APIRouter
 
-router = APIRouter(prefix="/users")
+router = APIRouter(prefix='/users')
 
-@router.get("/")
+
+@router.get('/')
 async def get_users():
-    return {"message": "List of users"}
+	return {'message': 'List of users'}
