@@ -1,0 +1,11 @@
+fastapi
+uvicorn
+sqlalchemy>=1.4
+asyncpg
+alembic
+requests
+greenlet
+python-dotenv
+pydantic-settings
+python-jose
+bcrypt

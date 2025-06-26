@@ -1,0 +1,29 @@
+services:
+  db:
+    image: postgres:15
+    container_name: cc_db
+    restart: always
+    environment:
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: ${DB_NAME}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+
+  api:
+    build: .
+    container_name: cc_be
+    depends_on:
+      - db
+    env_file:
+      - .env
+    ports:
+      - "8080:80"
+    volumes:
+      - ./mount:/src
+      - ./mount/scripts:/src/scripts
+
+volumes:
+  postgres_data:
