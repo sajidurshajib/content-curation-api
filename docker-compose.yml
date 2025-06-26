@@ -24,6 +24,7 @@ services:
     volumes:
       - ./mount:/src
       - ./mount/scripts:/src/scripts
+      - ./mount/alembic:/src/alembic
 
 volumes:
   postgres_data:
