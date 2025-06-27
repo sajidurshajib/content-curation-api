@@ -1,14 +1,13 @@
 import json
 
-from fastapi import Depends, status
-from fastapi.security import HTTPBasicCredentials, HTTPBearer
-from sqlalchemy.ext.asyncio import AsyncSession
-
 from app.enums.tokens import TokenType
 from app.services.connection import get_db
 from app.usecases import users as users_usecases
 from app.utils.logger import Logger
 from app.utils.token import Token
+from fastapi import Depends, status
+from fastapi.security import HTTPBasicCredentials, HTTPBearer
+from sqlalchemy.ext.asyncio import AsyncSession
 
 security = HTTPBearer()
 
@@ -152,8 +151,13 @@ async def logged_in(
 		if not success:
 			logger.info('Unauthorized!')
 			return status.HTTP_401_UNAUTHORIZED, False, 'Unauthorized!', None
-			
-		return status_code, success, message, {"data":json.loads(data['data'])}
+
+		return (
+			status_code,
+			success,
+			message,
+			{'data': json.loads(data['data'])},
+		)
 
 	except Exception as e:
 		logger.error(f'Something went wrong with auth data: {e}')
@@ -180,7 +184,9 @@ def rbac_required(
 				return status_code, success, message, data
 
 			if data['data']['role']['role'] not in required_roles:
-				logger.info("You don't have permission to access this resource!")
+				logger.info(
+					"You don't have permission to access this resource!"
+				)
 				return (
 					status.HTTP_403_FORBIDDEN,
 					False,

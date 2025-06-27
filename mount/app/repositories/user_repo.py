@@ -4,7 +4,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
 from sqlalchemy.orm import joinedload
 
-from app.models import User, Role
+from app.models import Role, User
 
 from .base_repo import BaseRepository
 
@@ -49,10 +49,7 @@ class UserRepository(BaseRepository[User]):
 		limit: int = None,
 	):
 		try:
-			query = (
-				select(User)
-				.options(joinedload(User.role))
-			)
+			query = select(User).options(joinedload(User.role))
 			query = query.filter(User.is_active == is_active)
 			if role:
 				query = query.filter(User.role.has(Role.role == role))
@@ -74,7 +71,6 @@ class UserRepository(BaseRepository[User]):
 			return total, data
 		except SQLAlchemyError as e:
 			raise e
-			
 
 	async def create(self, data: dict, commit: bool = True):
 		try:

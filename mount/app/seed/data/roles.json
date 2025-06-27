@@ -3,6 +3,12 @@
         "role": "admin"
     },
     {
+        "role": "manager"
+    },
+    {
+        "role": "developer"
+    },
+    {
         "role": "user"
     }
 ]

@@ -1,48 +1,25 @@
-from fastapi import APIRouter, Depends, Query
+import json
+
+from fastapi import APIRouter, Depends
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.schemas import StandardResponse
-from app.schemas.users import LoginRequest, UserRequest, UserUpdate, UpdatePassword
+from app.schemas.users import (
+	LoginRequest,
+	UpdatePassword,
+	UserRequest,
+	UserUpdate,
+)
 from app.services.auth_dependency import (
 	logged_in,
 	refresh_token,
 	validate_token,
-	rbac_required,
 )
-import json
 from app.services.connection import get_db
 from app.usecases import users as users_usecases
 from app.utils.responses import standard_response
-from app.enums.roles import RoleEnum
 
 router = APIRouter(prefix='/users')
-
-
-@router.get('/', description='<h1>Only for Admin</h1>')
-async def search_users(
-	key: str = '',
-	role: RoleEnum = Query(),
-	is_active: bool = True,
-	page: int = 1,
-	limit: int = 10,
-	user: StandardResponse = Depends(rbac_required(['admin'])),
-	db: AsyncSession = Depends(get_db),
-):
-	user_status_code, user_success, user_message, user_data = user
-	if not user_success:
-		return standard_response(
-			user_status_code, user_success, user_message, user_data
-		)
-
-	(
-		status_code,
-		success,
-		message,
-		user_data,
-	) = await users_usecases.search(
-		key, role.value, is_active, page, limit, db
-	)
-	return standard_response(status_code, success, message, user_data)
 
 
 @router.get('/auth', response_model=StandardResponse)
@@ -61,6 +38,27 @@ async def validate(user: StandardResponse = Depends(validate_token)):
 async def refresh(user: StandardResponse = Depends(refresh_token)):
 	status, success, message, data = user
 	return standard_response(status, success, message, data)
+
+
+@router.get('/view/{id}')
+async def view_user(
+	id: int,
+	user: StandardResponse = Depends(logged_in),
+	db: AsyncSession = Depends(get_db),
+):
+	user_status_code, user_success, user_message, user_data = user
+	if not user_success:
+		return standard_response(
+			user_status_code, user_success, user_message, user_data
+		)
+
+	(
+		status_code,
+		success,
+		message,
+		user_data,
+	) = await users_usecases.get_user_by_id(id, db)
+	return standard_response(status_code, success, message, user_data)
 
 
 @router.post('/signup', response_model=StandardResponse)

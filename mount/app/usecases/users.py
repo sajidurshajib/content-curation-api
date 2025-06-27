@@ -1,7 +1,8 @@
+import json
+
 from fastapi import status
 from sqlalchemy.ext.asyncio import AsyncSession
-import json
-from app.utils.helpers import calculate_pagination, page_to_offset
+
 from app.enums.roles import RoleEnum
 from app.enums.tokens import TokenType
 from app.models import User
@@ -15,6 +16,7 @@ from app.schemas.users import (
 	UserUpdate,
 	UserWithRoleId,
 )
+from app.utils.helpers import calculate_pagination, page_to_offset
 from app.utils.logger import Logger
 from app.utils.password_utils import PasswordHasher
 from app.utils.token import Token
@@ -39,9 +41,7 @@ async def auth(user_id: int, db: AsyncSession):
 			full_name=user_data.full_name,
 			is_active=user_data.is_active,
 			photo=user_data.photo,
-			role=RoleResponse.model_validate(
-				user_data.role.__dict__.copy()
-			)
+			role=RoleResponse.model_validate(user_data.role.__dict__.copy())
 			if user_data.role
 			else None,
 		)
@@ -219,6 +219,45 @@ async def signup(user_data: UserRequest, db: AsyncSession):
 		)
 
 
+async def get_user_by_id(
+	id: int,
+	db: AsyncSession,
+):
+	user_repo = UserRepository(db)
+
+	try:
+		user = await user_repo.get_full_user(id)
+		if user:
+			user_resp = UserResponse(
+				id=user.id,
+				username=user.username,
+				email=user.email,
+				full_name=user.full_name,
+				is_active=user.is_active,
+				photo=user.photo,
+				role=RoleResponse.model_validate(user.role.__dict__.copy())
+				if user.role
+				else None,
+			)
+			return (
+				status.HTTP_200_OK,
+				True,
+				'User found!',
+				user_resp.model_dump_json(),
+			)
+		else:
+			return status.HTTP_404_NOT_FOUND, True, 'User not found!', {}
+
+	except Exception as e:
+		logger.error(f'Something went wrong with user data: {e}')
+		return (
+			status.HTTP_500_INTERNAL_SERVER_ERROR,
+			False,
+			f'Something went wrong with user data: {e}',
+			None,
+		)
+
+
 async def update(user_id: int, user_data: UserUpdate, db: AsyncSession):
 	user_repo = UserRepository(db)
 
@@ -345,9 +384,7 @@ async def search(
 					full_name=user.full_name,
 					is_active=user.is_active,
 					photo=user.photo,
-					role=RoleResponse.model_validate(
-						user.role.__dict__.copy()
-					)
+					role=RoleResponse.model_validate(user.role.__dict__.copy())
 					if user.role
 					else None,
 				)
@@ -376,3 +413,33 @@ async def search(
 			None,
 		)
 
+
+async def user_status_change(user_id: int, db: AsyncSession):
+	user_repo = UserRepository(db)
+
+	try:
+		user: User = await user_repo.get_by_field('id', user_id)
+		if user:
+			if user.is_active:
+				user.is_active = False
+			else:
+				user.is_active = True
+			await user_repo.update(user_id, user.__dict__.copy())
+			await db.commit()
+			return (
+				status.HTTP_200_OK,
+				True,
+				'User status changed!',
+				{'is_active': user.is_active},
+			)
+		else:
+			return status.HTTP_404_NOT_FOUND, False, 'User not found!', None
+
+	except Exception as e:
+		logger.error(f'Something went wrong with user data: {e}')
+		return (
+			status.HTTP_500_INTERNAL_SERVER_ERROR,
+			False,
+			f'Something went wrong with user data: {e}',
+			None,
+		)

@@ -1,6 +1,5 @@
-from slugify import slugify
-
 from app.repositories.base_repo import BaseRepository
+from slugify import slugify
 
 
 def page_to_offset(page: int, limit: int):
