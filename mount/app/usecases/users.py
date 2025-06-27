@@ -20,58 +20,49 @@ from app.utils.token import Token
 logger = Logger(__name__)
 
 
-# async def auth(user_id: int, db: AsyncSession):
-# 	user_repo = UserRepository(db)
+async def auth(user_id: int, db: AsyncSession):
+	user_repo = UserRepository(db)
 
-# 	try:
-# 		user_data: User = await user_repo.get_full_user(user_id)
+	try:
+		user_data: User = await user_repo.get_full_user(user_id)
 
-# 		if not user_data:
-# 			logger.info('User not found!')
-# 			return status.HTTP_404_NOT_FOUND, False, 'User not found!', None
+		if not user_data:
+			logger.info('User not found!')
+			return status.HTTP_404_NOT_FOUND, False, 'User not found!', None
 
-# 		new_data_resp = UserResponse(
-# 			id=user_data.id,
-# 			username=user_data.username,
-# 			email=user_data.email,
-# 			full_name=user_data.full_name,
-# 			is_active=user_data.is_active,
-# 			photo=user_data.photo,
-# 			role=RoleOnlyResponse.model_validate(
-# 				user_data.role.__dict__.copy()
-# 			)
-# 			if user_data.role
-# 			else None,
-# 			profile=ProfileResponse.model_validate(
-# 				user_data.profile.__dict__.copy()
-# 			)
-# 			if user_data.profile
-# 			else None,
-# 		)
+		new_data_resp = UserResponse(
+			id=user_data.id,
+			username=user_data.username,
+			email=user_data.email,
+			full_name=user_data.full_name,
+			is_active=user_data.is_active,
+			photo=user_data.photo,
+			role=RoleResponse.model_validate(
+				user_data.role.__dict__.copy()
+			)
+			if user_data.role
+			else None,
+		)
 
-# 		new_data_json = new_data_resp.model_dump_json()
-# 		role_permissions = RoleResponse.model_validate(
-# 			user_data.role.__dict__.copy()
-# 		)
+		new_data_json = new_data_resp.model_dump_json()
 
-# 		return (
-# 			status.HTTP_200_OK,
-# 			True,
-# 			'Authenticated!',
-# 			{
-# 				'data': new_data_json,
-# 				'permissions': role_permissions.permissions,
-# 			},
-# 		)
+		return (
+			status.HTTP_200_OK,
+			True,
+			'Authenticated!',
+			{
+				'data': new_data_json,
+			},
+		)
 
-# 	except Exception as e:
-# 		logger.error(f'Something went wrong with user data: {e}')
-# 		return (
-# 			status.HTTP_500_INTERNAL_SERVER_ERROR,
-# 			False,
-# 			f'Something went wrong with user data: {e}',
-# 			None,
-# 		)
+	except Exception as e:
+		logger.error(f'Something went wrong with user data: {e}')
+		return (
+			status.HTTP_500_INTERNAL_SERVER_ERROR,
+			False,
+			f'Something went wrong with user data: {e}',
+			None,
+		)
 
 
 async def login(user_credentials: LoginRequest, db: AsyncSession):
