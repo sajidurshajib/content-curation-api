@@ -17,8 +17,10 @@ class Article(BaseModel):
 	cover_image = Column(String, nullable=True)
 
 	author_id = Column(Integer, ForeignKey('users.id'), nullable=False)
-
 	author = relationship('User', back_populates='articles')
+
+	category_id = Column(Integer, ForeignKey('categories.id'), nullable=False)
+	category = relationship("Category", back_populates="articles")
 
 	def __repr__(self):
 		return f"<Article(id={self.id}, title='{self.title}')>"
