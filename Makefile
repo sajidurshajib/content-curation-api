@@ -30,6 +30,9 @@ stop:
 migrate:
 	docker compose exec -it $(SERVICE_NAME) /scripts/migrate-db.sh "$(m)"
 
+migrate-back:
+	docker compose exec -it $(SERVICE_NAME) alembic downgrade -1
+
 # Remove the Docker image
 clean:
 	docker rmi $(IMAGE_NAME)

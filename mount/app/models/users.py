@@ -19,5 +19,7 @@ class User(BaseModel):
 
 	role = relationship('Role', back_populates='users')
 
+	articles = relationship('Article', back_populates='author')
+
 	def __repr__(self):
 		return f"<User(id={self.id}, username='{self.username}', email='{self.email}')>"
