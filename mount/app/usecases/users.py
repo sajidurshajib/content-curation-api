@@ -1,6 +1,7 @@
 from fastapi import status
 from sqlalchemy.ext.asyncio import AsyncSession
-
+import json
+from app.utils.helpers import calculate_pagination, page_to_offset
 from app.enums.roles import RoleEnum
 from app.enums.tokens import TokenType
 from app.models import User
@@ -314,3 +315,64 @@ async def update_password(
 			f'Something went wrong with password update: {e}',
 			None,
 		)
+
+
+async def search(
+	key: str,
+	role: str,
+	is_active: bool,
+	page: int,
+	limit: int,
+	db: AsyncSession,
+):
+	user_repo = UserRepository(db)
+
+	try:
+		total, users = await user_repo.search(
+			key,
+			role,
+			is_active,
+			offset=page_to_offset(page, limit),
+			limit=limit,
+		)
+		if users:
+			all_users = []
+			for user in users:
+				user_resp = UserResponse(
+					id=user.id,
+					username=user.username,
+					email=user.email,
+					full_name=user.full_name,
+					is_active=user.is_active,
+					photo=user.photo,
+					role=RoleResponse.model_validate(
+						user.role.__dict__.copy()
+					)
+					if user.role
+					else None,
+				)
+				all_users.append(json.loads(user_resp.model_dump_json()))
+
+			return (
+				status.HTTP_200_OK,
+				True,
+				'Users found!',
+				{
+					'pagination': calculate_pagination(
+						total_data=total, page=page, limit=limit
+					),
+					'data': all_users,
+				},
+			)
+		else:
+			return status.HTTP_200_OK, True, 'Users not found!', {}
+
+	except Exception as e:
+		logger.error(f'Something went wrong with user data: {e}')
+		return (
+			status.HTTP_500_INTERNAL_SERVER_ERROR,
+			False,
+			f'Something went wrong with user data: {e}',
+			None,
+		)
+

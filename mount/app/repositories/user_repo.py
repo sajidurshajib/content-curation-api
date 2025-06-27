@@ -4,7 +4,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
 from sqlalchemy.orm import joinedload
 
-from app.models import User
+from app.models import User, Role
 
 from .base_repo import BaseRepository
 
@@ -40,43 +40,41 @@ class UserRepository(BaseRepository[User]):
 		except SQLAlchemyError as e:
 			raise e
 
-	# async def search(
-	# 	self,
-	# 	key: str,
-	# 	role: str,
-	# 	is_active: bool,
-	# 	offset: int = None,
-	# 	limit: int = None,
-	# ):
-	# 	try:
-	# 		query = (
-	# 			select(User)
-	# 			.join(User.profile, isouter=True)
-	# 			.options(joinedload(User.role), joinedload(User.profile))
-	# 		)
-	# 		query = query.filter(User.is_active == is_active)
-	# 		if role:
-	# 			query = query.filter(User.role.has(Role.role == role))
-	# 		if key:
-	# 			query = query.filter(
-	# 				or_(
-	# 					User.full_name.ilike(f'%{key}%'),
-	# 					User.username.ilike(f'%{key}%'),
-	# 					User.email.ilike(f'%{key}%'),
-	# 					Profile.phone.ilike(f'%{key}%'),
-	# 					Profile.secondary_phone.ilike(f'%{key}%'),
-	# 				)
-	# 			)
+	async def search(
+		self,
+		key: str,
+		role: str,
+		is_active: bool,
+		offset: int = None,
+		limit: int = None,
+	):
+		try:
+			query = (
+				select(User)
+				.options(joinedload(User.role))
+			)
+			query = query.filter(User.is_active == is_active)
+			if role:
+				query = query.filter(User.role.has(Role.role == role))
+			if key:
+				query = query.filter(
+					or_(
+						User.full_name.ilike(f'%{key}%'),
+						User.username.ilike(f'%{key}%'),
+						User.email.ilike(f'%{key}%'),
+					)
+				)
 
-	# 		total_results = await self.db.execute(query)
-	# 		total = len(total_results.unique().scalars().all())
+			total_results = await self.db.execute(query)
+			total = len(total_results.unique().scalars().all())
 
-	# 		query = query.limit(limit).offset(offset)
-	# 		result = await self.db.execute(query)
-	# 		data = result.unique().scalars().all()
-	# 		return total, data
-	# 	except SQLAlchemyError as e:
-	# 		raise e
+			query = query.limit(limit).offset(offset)
+			result = await self.db.execute(query)
+			data = result.unique().scalars().all()
+			return total, data
+		except SQLAlchemyError as e:
+			raise e
+			
 
 	async def create(self, data: dict, commit: bool = True):
 		try:

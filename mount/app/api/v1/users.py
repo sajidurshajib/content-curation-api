@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, Query
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.schemas import StandardResponse
@@ -13,18 +13,36 @@ import json
 from app.services.connection import get_db
 from app.usecases import users as users_usecases
 from app.utils.responses import standard_response
+from app.enums.roles import RoleEnum
 
 router = APIRouter(prefix='/users')
 
 
-@router.get('/')
-async def get_users(user: StandardResponse = Depends(rbac_required(['admin']))):
+@router.get('/', description='<h1>Only for Admin</h1>')
+async def search_users(
+	key: str = '',
+	role: RoleEnum = Query(),
+	is_active: bool = True,
+	page: int = 1,
+	limit: int = 10,
+	user: StandardResponse = Depends(rbac_required(['admin'])),
+	db: AsyncSession = Depends(get_db),
+):
 	user_status_code, user_success, user_message, user_data = user
 	if not user_success:
 		return standard_response(
 			user_status_code, user_success, user_message, user_data
 		)
-	return {'message': 'List of users'}
+
+	(
+		status_code,
+		success,
+		message,
+		user_data,
+	) = await users_usecases.search(
+		key, role.value, is_active, page, limit, db
+	)
+	return standard_response(status_code, success, message, user_data)
 
 
 @router.get('/auth', response_model=StandardResponse)
