@@ -24,7 +24,7 @@ class UserRequest(BaseModel):
 class UserUpdate(BaseModel):
 	email: Optional[str] = None
 	full_name: Optional[str] = None
-	photo: Optional[str] = None
+	photo: Optional[str] = ""
 
 	class Config:
 		form_attributes = True

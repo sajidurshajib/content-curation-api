@@ -11,6 +11,7 @@ from app.schemas.users import (
 	LoginRequest,
 	UserRequest,
 	UserResponse,
+	UserUpdate,
 	UserWithRoleId,
 )
 from app.utils.logger import Logger
@@ -217,104 +218,99 @@ async def signup(user_data: UserRequest, db: AsyncSession):
 		)
 
 
-# async def update(user_id: int, user_data: UserUpdate, db: AsyncSession):
-# 	user_repo = UserRepository(db)
+async def update(user_id: int, user_data: UserUpdate, db: AsyncSession):
+	user_repo = UserRepository(db)
 
-# 	try:
-# 		user_exists: User = await user_repo.get_full_user(user_id)
-# 		if not user_exists:
-# 			logger.info('User not found!')
-# 			return status.HTTP_404_NOT_FOUND, False, 'User not found!', None
+	try:
+		user_exists: User = await user_repo.get_full_user(user_id)
+		if not user_exists:
+			logger.info('User not found!')
+			return status.HTTP_404_NOT_FOUND, False, 'User not found!', None
 
-# 		if user_data.email:
-# 			user_exists.email = user_data.email
-# 		if user_data.full_name:
-# 			user_exists.full_name = user_data.full_name
-# 		if user_data.photo:
-# 			user_exists.photo = user_data.photo
+		if user_data.email:
+			user_exists.email = user_data.email
+		if user_data.full_name:
+			user_exists.full_name = user_data.full_name
+		if user_data.photo:
+			user_exists.photo = user_data.photo
 
-# 		new_user: User = await user_repo.update(
-# 			user_id, user_exists.__dict__.copy()
-# 		)
+		new_user: User = await user_repo.update(
+			user_id, user_exists.__dict__.copy()
+		)
 
-# 		new_data_resp = UserResponse(
-# 			id=new_user.id,
-# 			username=new_user.username,
-# 			email=new_user.email,
-# 			full_name=new_user.full_name,
-# 			photo=new_user.photo,
-# 			is_active=new_user.is_active,
-# 			role=RoleOnlyResponse.model_validate(new_user.role.__dict__.copy())
-# 			if new_user.role
-# 			else None,
-# 			profile=ProfileResponse.model_validate(
-# 				new_user.profile.__dict__.copy()
-# 			)
-# 			if new_user.profile
-# 			else None,
-# 		)
+		new_data_resp = UserResponse(
+			id=new_user.id,
+			username=new_user.username,
+			email=new_user.email,
+			full_name=new_user.full_name,
+			photo=new_user.photo,
+			is_active=new_user.is_active,
+			role=RoleResponse.model_validate(new_user.role.__dict__.copy())
+			if new_user.role
+			else None,
+		)
 
-# 		new_data_json = new_data_resp.model_dump_json()
+		new_data_json = new_data_resp.model_dump_json()
 
-# 		return status.HTTP_202_ACCEPTED, True, 'User updated!', new_data_json
-# 	except Exception as e:
-# 		logger.error(f'Something went wrong with user data: {e}')
-# 		return (
-# 			status.HTTP_500_INTERNAL_SERVER_ERROR,
-# 			False,
-# 			f'Something went wrong with user data: {e}',
-# 			None,
-# 		)
+		return status.HTTP_202_ACCEPTED, True, 'User updated!', new_data_json
+	except Exception as e:
+		logger.error(f'Something went wrong with user data: {e}')
+		return (
+			status.HTTP_500_INTERNAL_SERVER_ERROR,
+			False,
+			f'Something went wrong with user data: {e}',
+			None,
+		)
 
 
-# async def update_password(
-# 	new_password: str,
-# 	user_id: int,
-# 	db: AsyncSession,
-# 	check_old_password: bool = True,
-# 	old_password: str = None,
-# ):
-# 	user_repo = UserRepository(db)
+async def update_password(
+	new_password: str,
+	user_id: int,
+	db: AsyncSession,
+	check_old_password: bool = True,
+	old_password: str = None,
+):
+	user_repo = UserRepository(db)
 
-# 	try:
-# 		user_exists = await user_repo.get_by_field('id', user_id)
-# 		if not user_exists:
-# 			logger.info('User not found!')
-# 			return status.HTTP_404_NOT_FOUND, False, 'User not found!', None
+	try:
+		user_exists = await user_repo.get_by_field('id', user_id)
+		if not user_exists:
+			logger.info('User not found!')
+			return status.HTTP_404_NOT_FOUND, False, 'User not found!', None
 
-# 		if check_old_password:
-# 			verify_password = PasswordHasher.verify_password(
-# 				old_password, user_exists.hashed_password
-# 			)
-# 			if not verify_password:
-# 				logger.info('Wrong password!')
-# 				return (
-# 					status.HTTP_401_UNAUTHORIZED,
-# 					False,
-# 					'Wrong password!',
-# 					None,
-# 				)
+		if check_old_password:
+			verify_password = PasswordHasher.verify_password(
+				old_password, user_exists.hashed_password
+			)
+			if not verify_password:
+				logger.info('Wrong password!')
+				return (
+					status.HTTP_401_UNAUTHORIZED,
+					False,
+					'Wrong password!',
+					None,
+				)
 
-# 		new_hashed_password = PasswordHasher.hash_password(new_password)
-# 		user_exists.hashed_password = new_hashed_password
+		new_hashed_password = PasswordHasher.hash_password(new_password)
+		user_exists.hashed_password = new_hashed_password
 
-# 		user_update: User = await user_repo.update(
-# 			user_id, user_exists.__dict__.copy()
-# 		)
-# 		if user_update:
-# 			return status.HTTP_202_ACCEPTED, True, 'Password updated!', None
-# 		else:
-# 			return (
-# 				status.HTTP_500_INTERNAL_SERVER_ERROR,
-# 				False,
-# 				'Something went wrong with password update!',
-# 				None,
-# 			)
-# 	except Exception as e:
-# 		logger.error(f'Something went wrong with password update: {e}')
-# 		return (
-# 			status.HTTP_500_INTERNAL_SERVER_ERROR,
-# 			False,
-# 			f'Something went wrong with password update: {e}',
-# 			None,
-# 		)
+		user_update: User = await user_repo.update(
+			user_id, user_exists.__dict__.copy()
+		)
+		if user_update:
+			return status.HTTP_202_ACCEPTED, True, 'Password updated!', None
+		else:
+			return (
+				status.HTTP_500_INTERNAL_SERVER_ERROR,
+				False,
+				'Something went wrong with password update!',
+				None,
+			)
+	except Exception as e:
+		logger.error(f'Something went wrong with password update: {e}')
+		return (
+			status.HTTP_500_INTERNAL_SERVER_ERROR,
+			False,
+			f'Something went wrong with password update: {e}',
+			None,
+		)
