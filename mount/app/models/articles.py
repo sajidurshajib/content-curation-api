@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, Text
+from sqlalchemy import Column, Integer, String, Text, ForeignKey
 from sqlalchemy.orm import relationship
 
 from .base import BaseModel
@@ -15,6 +15,8 @@ class Article(BaseModel):
 	)  # draft, published, archived
 	thumb_image = Column(String, nullable=True)
 	cover_image = Column(String, nullable=True)
+
+	author_id = Column(Integer, ForeignKey('users.id'), nullable=False)
 
 	author = relationship('User', back_populates='articles')
 
