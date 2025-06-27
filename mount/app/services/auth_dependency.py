@@ -114,7 +114,6 @@ async def refresh_token(
 async def logged_in(
 	credentials: HTTPBasicCredentials = Depends(security),
 	db: AsyncSession = Depends(get_db),
-	permissions: bool = False,
 ):
 	try:
 		token = credentials.credentials
@@ -153,15 +152,8 @@ async def logged_in(
 		if not success:
 			logger.info('Unauthorized!')
 			return status.HTTP_401_UNAUTHORIZED, False, 'Unauthorized!', None
-
-		if permissions:
-			return (
-				status_code,
-				success,
-				message,
-				{'data': data_json, 'permissions': data['permissions']},
-			)
-		return status_code, success, message, data['data']
+			
+		return status_code, success, message, {"data":json.loads(data['data'])}
 
 	except Exception as e:
 		logger.error(f'Something went wrong with auth data: {e}')
@@ -173,22 +165,22 @@ async def logged_in(
 		)
 
 
-def has_permission(required_permission):
-	async def permission_checker(
+def rbac_required(
+	required_roles,
+):
+	async def role_checker(
 		credentials: HTTPBasicCredentials = Depends(security),
 		db: AsyncSession = Depends(get_db),
 	):
 		try:
 			status_code, success, message, data = await logged_in(
-				credentials, db, True
+				credentials, db
 			)
 			if not success:
 				return status_code, success, message, data
 
-			if required_permission not in data['permissions']:
-				logger.info(
-					"You don't have permission to access this resource!"
-				)
+			if data['data']['role']['role'] not in required_roles:
+				logger.info("You don't have permission to access this resource!")
 				return (
 					status.HTTP_403_FORBIDDEN,
 					False,
@@ -206,4 +198,4 @@ def has_permission(required_permission):
 				None,
 			)
 
-	return permission_checker
+	return role_checker

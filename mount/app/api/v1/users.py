@@ -7,6 +7,7 @@ from app.services.auth_dependency import (
 	logged_in,
 	refresh_token,
 	validate_token,
+	rbac_required,
 )
 import json
 from app.services.connection import get_db
@@ -17,7 +18,12 @@ router = APIRouter(prefix='/users')
 
 
 @router.get('/')
-async def get_users():
+async def get_users(user: StandardResponse = Depends(rbac_required(['admin']))):
+	user_status_code, user_success, user_message, user_data = user
+	if not user_success:
+		return standard_response(
+			user_status_code, user_success, user_message, user_data
+		)
 	return {'message': 'List of users'}
 
 
