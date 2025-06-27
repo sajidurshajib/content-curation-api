@@ -20,10 +20,7 @@ async def roles(db):
 				status.HTTP_404_NOT_FOUND, False, 'No data found!', data=[]
 			)
 
-		data = [
-			RoleResponse(role=dt.role)
-			for dt in data
-		]
+		data = [RoleResponse(role=dt.role) for dt in data]
 		results = [d.model_dump() for d in data]
 
 		return standard_response(200, True, 'Roles available', data=results)
