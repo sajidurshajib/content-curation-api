@@ -3,6 +3,8 @@ from typing import List, Optional
 from pydantic import BaseModel
 
 from app.enums.articles import ArticleStatus
+from .users import UserResponse
+from .categories import CategoryResponse
 
 
 class ArticleRequest(BaseModel):
@@ -32,7 +34,7 @@ class ArticleUpdate(BaseModel):
 		form_attributes = True
 
 
-class ArticleResponse(BaseModel):
+class ArticleOnlyResponse(BaseModel):
 	id: int
 	title: str
 	slug: str
@@ -41,8 +43,17 @@ class ArticleResponse(BaseModel):
 	tags: List[str]
 	thumb_image: Optional[str]
 	cover_image: Optional[str]
-	author_id: int
+
+
+class ArticleWithCatId(ArticleOnlyResponse):
 	category_id: int
+
+
+class ArticleResponse(ArticleOnlyResponse):
+	author: UserResponse = None
+	category: CategoryResponse = None 
 
 	class Config:
 		form_attributes = True
+
+

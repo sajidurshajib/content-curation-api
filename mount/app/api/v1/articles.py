@@ -11,6 +11,26 @@ from app.utils.responses import standard_response
 router = APIRouter(prefix='/articles')
 
 
+@router.get('/', response_model=StandardResponse)
+async def search_articles(
+	keys: str = '',
+	category: str = None,
+	tag: str = None,
+	limit: int = 10,
+	offset: int = 0,
+	db: AsyncSession = Depends(get_db),
+):
+	(
+		status_code,
+		success,
+		message,
+		data,
+	) = await article_usecase.search_articles(
+		keys=keys, category=category, tag=tag, limit=limit, offset=offset, db=db
+	)
+	return standard_response(status_code, success, message, data)
+
+
 @router.post(
 	'/',
 	response_model=StandardResponse,
@@ -43,6 +63,7 @@ async def get_articles(
 	id: int,
 	db: AsyncSession = Depends(get_db),
 ):
+	# TODO need to work with status with user_id
 	(
 		status_code,
 		success,
