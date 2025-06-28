@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, Text, ForeignKey
+from sqlalchemy import Column, ForeignKey, Integer, String, Text
 from sqlalchemy.orm import relationship
 
 from .base import BaseModel
@@ -20,7 +20,7 @@ class Article(BaseModel):
 	author = relationship('User', back_populates='articles')
 
 	category_id = Column(Integer, ForeignKey('categories.id'), nullable=False)
-	category = relationship("Category", back_populates="articles")
+	category = relationship('Category', back_populates='articles')
 
 	def __repr__(self):
 		return f"<Article(id={self.id}, title='{self.title}')>"

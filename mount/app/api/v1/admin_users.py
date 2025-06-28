@@ -21,7 +21,7 @@ async def search_users(
 	is_active: bool = True,
 	page: int = 1,
 	limit: int = 10,
-	user: StandardResponse = Depends(rbac_required(['admin'])),
+	user: StandardResponse = Depends(rbac_required([RoleEnum.ADMIN.value])),
 	db: AsyncSession = Depends(get_db),
 ):
 	user_status_code, user_success, user_message, user_data = user
@@ -44,7 +44,7 @@ async def search_users(
 @router.patch('/status/{user_id}')
 async def user_status_change(
 	user_id: int,
-	user: StandardResponse = Depends(rbac_required(['admin'])),
+	user: StandardResponse = Depends(rbac_required([RoleEnum.ADMIN.value])),
 	db: AsyncSession = Depends(get_db),
 ):
 	user_status_code, user_success, user_message, user_data = user
@@ -66,7 +66,7 @@ async def user_status_change(
 async def user_password_change(
 	user_id: int,
 	new_password: NewPasswordRequest,
-	user: StandardResponse = Depends(rbac_required(['admin'])),
+	user: StandardResponse = Depends(rbac_required([RoleEnum.ADMIN.value])),
 	db: AsyncSession = Depends(get_db),
 ):
 	user_status_code, user_success, user_message, user_data = user

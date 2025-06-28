@@ -62,3 +62,8 @@ ruff-check-import-fix:
 
 ruff-format:
 	ruff format .
+
+ruff-all:
+	ruff check . --fix
+	ruff check . --select I --fix
+	ruff format .
