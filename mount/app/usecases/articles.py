@@ -1,22 +1,23 @@
+import json
+
 from fastapi import status
 from sqlalchemy.ext.asyncio import AsyncSession
-import json
+
+from app.models import Article
 from app.repositories.article_repo import ArticleRepository
 from app.repositories.category_repo import CategoryRepository
 from app.schemas.articles import (
+	ArticleOnlyResponse,
 	ArticleRequest,
 	ArticleRequestForDB,
-	ArticleOnlyResponse,
-	ArticleWithCatId,
 	ArticleResponse,
 	ArticleUpdate,
+	ArticleWithCatId,
 )
+from app.schemas.categories import CategoryResponse
+from app.schemas.users import UserResponse
 from app.utils.helpers import generate_unique_slug
 from app.utils.logger import Logger
-from app.models import Article
-from app.schemas.users import UserResponse
-from app.schemas.categories import CategoryResponse
-from app.schemas.roles import RoleResponse
 
 logger = Logger(__name__)
 
@@ -31,12 +32,10 @@ def article_response(article: Article):
 		tags=article.tags,
 		thumb_image=article.thumb_image,
 		cover_image=article.cover_image,
-		author=UserResponse.model_validate(
-			article.author.__dict__.copy()
-		),
+		author=UserResponse.model_validate(article.author.__dict__.copy()),
 		category=CategoryResponse.model_validate(
 			article.category.__dict__.copy()
-		)
+		),
 	)
 	return article_resps.model_dump_json()
 
@@ -81,7 +80,6 @@ async def create_article(
 		new_article_resp = ArticleOnlyResponse.model_validate(
 			new_article.__dict__.copy()
 		).model_dump_json()
-
 
 		return (
 			status.HTTP_201_CREATED,
@@ -230,6 +228,7 @@ async def delete_article(
 			None,
 		)
 
+
 async def search_articles(
 	db: AsyncSession,
 	keys: str,
@@ -239,38 +238,29 @@ async def search_articles(
 	offset: int = 0,
 ):
 	article_repo = ArticleRepository(db)
-	
+
 	try:
 		total, articles = await article_repo.search(
-			keys=keys,
-			category=category,
-			tag=tag,
-			limit=limit,
-			offset=offset
+			keys=keys, category=category, tag=tag, limit=limit, offset=offset
 		)
-		
+
 		articles_resp = []
 		for article in articles:
 			article_resp = article_response(article)
 			articles_resp.append(json.loads(article_resp))
 
-		
-		
 		return (
 			status.HTTP_200_OK,
 			True,
 			'Articles retrieved successfully',
-			{
-				'total': total,
-				'articles': articles_resp
-			}
+			{'total': total, 'articles': articles_resp},
 		)
-	
+
 	except Exception as e:
 		logger.error(f'Error searching articles: {e}')
 		return (
 			status.HTTP_500_INTERNAL_SERVER_ERROR,
 			False,
 			'Failed to search articles',
-			None
+			None,
 		)

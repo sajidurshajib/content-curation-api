@@ -48,17 +48,15 @@ async def create_category(
 	return standard_response(status_code, success, message, data)
 
 
-
 @router.get('/{category_id}', response_model=StandardResponse)
-async def get_category(category_id:int, db:AsyncSession = Depends(get_db)):
+async def get_category(category_id: int, db: AsyncSession = Depends(get_db)):
 	(
 		status_code,
 		success,
 		message,
 		data,
 	) = await categories_usecase.get_category(category_id, db)
-	return standard_response(status_code, success, message, data)	
-
+	return standard_response(status_code, success, message, data)
 
 
 @router.patch('/{category_id}', response_model=StandardResponse)

@@ -3,8 +3,9 @@ from typing import List, Optional
 from pydantic import BaseModel
 
 from app.enums.articles import ArticleStatus
-from .users import UserResponse
+
 from .categories import CategoryResponse
+from .users import UserResponse
 
 
 class ArticleRequest(BaseModel):
@@ -51,9 +52,7 @@ class ArticleWithCatId(ArticleOnlyResponse):
 
 class ArticleResponse(ArticleOnlyResponse):
 	author: UserResponse = None
-	category: CategoryResponse = None 
+	category: CategoryResponse = None
 
 	class Config:
 		form_attributes = True
-
-

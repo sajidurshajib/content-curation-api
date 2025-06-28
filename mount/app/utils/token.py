@@ -18,10 +18,10 @@ class Token:
 		to_encode = data.copy()
 
 		if token_type == TokenType.ACCESS_TOKEN.value:
-			expire = datetime.now(timezone.utc) + timedelta(minutes=15)
+			expire = datetime.now(timezone.utc) + timedelta(minutes=30)
 			to_encode['token_type'] = TokenType.ACCESS_TOKEN.value
 		elif token_type == TokenType.REFRESH_TOKEN.value:
-			expire = datetime.now(timezone.utc) + timedelta(days=1)
+			expire = datetime.now(timezone.utc) + timedelta(days=2)
 			to_encode['token_type'] = TokenType.REFRESH_TOKEN.value
 		else:
 			to_encode['token_type'] = TokenType.ACCESS_TOKEN.value

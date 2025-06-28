@@ -26,7 +26,12 @@ async def search_articles(
 		message,
 		data,
 	) = await article_usecase.search_articles(
-		keys=keys, category=category, tag=tag, limit=limit, offset=offset, db=db
+		keys=keys,
+		category=category,
+		tag=tag,
+		limit=limit,
+		offset=offset,
+		db=db,
 	)
 	return standard_response(status_code, success, message, data)
 
@@ -63,7 +68,6 @@ async def get_articles(
 	id: int,
 	db: AsyncSession = Depends(get_db),
 ):
-	# TODO need to work with status with user_id
 	(
 		status_code,
 		success,

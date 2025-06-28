@@ -95,7 +95,7 @@ async def create_category(category: CategoryRequest, db: AsyncSession):
 		)
 
 
-async def get_category(category_id: int, db:AsyncSession):
+async def get_category(category_id: int, db: AsyncSession):
 	category_repo = CategoryRepository(db)
 	try:
 		category = await category_repo.get_by_field('id', category_id)
@@ -123,6 +123,7 @@ async def get_category(category_id: int, db:AsyncSession):
 			'Failed to retrieve categories',
 			None,
 		)
+
 
 async def update_category(
 	category_id: int, category: CategoryRequest, db: AsyncSession

@@ -10,3 +10,5 @@ pydantic-settings
 python-jose
 bcrypt
 python-slugify
+langchain
+langchain-groq
