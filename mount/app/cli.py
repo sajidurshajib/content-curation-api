@@ -3,6 +3,7 @@ import asyncio
 from app.services.connection import sessionmanager
 from app.services.config import config
 from app.seed.roles_seeder import seed_roles
+from app.seed.categories_seeder import seed_categories
 
 cli = typer.Typer()
 
@@ -18,9 +19,8 @@ def roles():
     asyncio.run(run_seed(seed_roles))
 
 @cli.command()
-def users():
-    print("noothing")
-    # asyncio.run(run_seed(seed_users))
+def categories():
+    asyncio.run(run_seed(seed_categories))
 
 if __name__ == "__main__":
     cli()

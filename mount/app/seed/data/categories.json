@@ -1,0 +1,12 @@
+[
+    { "name": "Politics" },
+    { "name": "Business" },
+    { "name": "Technology" },
+    { "name": "Health" },
+    { "name": "Sports" },
+    { "name": "Entertainment" },
+    { "name": "Science" },
+    { "name": "World" },
+    { "name": "Lifestyle" },
+    { "name": "Opinion" }
+]

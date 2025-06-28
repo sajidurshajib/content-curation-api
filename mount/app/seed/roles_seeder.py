@@ -9,7 +9,6 @@ from app.models.roles import Role
 
 async def seed_roles(session: AsyncSession):
 	try:
-		# Load roles from the JSON file
 		json_path = os.path.join(
 			os.path.dirname(__file__), 'data', 'roles.json'
 		)
@@ -23,14 +22,12 @@ async def seed_roles(session: AsyncSession):
 				print("[-] Skipping invalid role data: missing 'role'.")
 				continue
 
-			# Check if the role exists
 			existing_role_query = await session.execute(
 				select(Role).where(Role.role == role_name)
 			)
 			existing_role = existing_role_query.scalars().first()
 
 			if not existing_role:
-				# Create new role if it doesn't exist
 				print(f"[+] Creating new role '{role_name}'.")
 				new_role = Role(role=role_name)
 				session.add(new_role)

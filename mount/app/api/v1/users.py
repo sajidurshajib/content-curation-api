@@ -67,7 +67,7 @@ async def signup(user_in: UserRequest, db: AsyncSession = Depends(get_db)):
 	return standard_response(status, success, message, data)
 
 
-@router.post('/login', description='identifier: username_or_email')
+@router.post('/login', description='<h2>identifier: username_or_email</h2>')
 async def login(
 	user_credentials: LoginRequest, db: AsyncSession = Depends(get_db)
 ):

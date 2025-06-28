@@ -13,3 +13,5 @@ approach
 restart issue first time
 rebuild issue after package install
 write about token
+
+roles, admin, categories, articles
