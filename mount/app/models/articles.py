@@ -1,4 +1,5 @@
 from sqlalchemy import Column, ForeignKey, Integer, String, Text
+from sqlalchemy.dialects.postgresql import ARRAY, TEXT
 from sqlalchemy.orm import relationship
 
 from .base import BaseModel
@@ -13,6 +14,7 @@ class Article(BaseModel):
 	status = Column(
 		String, nullable=False, default='draft'
 	)  # draft, published, archived
+	tags = Column(ARRAY(TEXT), default=[])
 	thumb_image = Column(String, nullable=True)
 	cover_image = Column(String, nullable=True)
 
