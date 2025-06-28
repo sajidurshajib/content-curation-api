@@ -95,6 +95,35 @@ async def create_category(category: CategoryRequest, db: AsyncSession):
 		)
 
 
+async def get_category(category_id: int, db:AsyncSession):
+	category_repo = CategoryRepository(db)
+	try:
+		category = await category_repo.get_by_field('id', category_id)
+		if not category:
+			return (
+				status.HTTP_404_NOT_FOUND,
+				False,
+				f'Category with id {category_id} not found',
+				None,
+			)
+		return (
+			status.HTTP_200_OK,
+			True,
+			'category retrieved successfully',
+			CategoryResponse.model_validate(
+				category.__dict__.copy()
+			).model_dump_json(),
+		)
+
+	except Exception as e:
+		logger.error(f'Error retrieving categories: {e}')
+		return (
+			status.HTTP_500_INTERNAL_SERVER_ERROR,
+			False,
+			'Failed to retrieve categories',
+			None,
+		)
+
 async def update_category(
 	category_id: int, category: CategoryRequest, db: AsyncSession
 ):
