@@ -19,7 +19,9 @@ async def seed_categories(session: AsyncSession):
 			category_name = category_data.get('name')
 
 			if not category_name:
-				print("[-] Skipping invalid category data: missing 'category'.")
+				print(
+					"[-] Skipping invalid category data: missing 'category'."
+				)
 				continue
 
 			existing_category_query = await session.execute(
