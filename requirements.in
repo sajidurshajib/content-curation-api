@@ -12,3 +12,4 @@ bcrypt
 python-slugify
 langchain
 langchain-groq
+typer

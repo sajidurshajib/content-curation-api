@@ -1,0 +1,26 @@
+import typer
+import asyncio
+from app.services.connection import sessionmanager
+from app.services.config import config
+from app.seed.roles_seeder import seed_roles
+
+cli = typer.Typer()
+
+async def run_seed(func):
+    sessionmanager.init(config.db_dsn)
+    async with sessionmanager.session() as session:
+        await func(session)
+        await session.commit()
+    await sessionmanager.close()
+
+@cli.command()
+def roles():
+    asyncio.run(run_seed(seed_roles))
+
+@cli.command()
+def users():
+    print("noothing")
+    # asyncio.run(run_seed(seed_users))
+
+if __name__ == "__main__":
+    cli()

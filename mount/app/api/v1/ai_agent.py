@@ -10,9 +10,9 @@ from app.utils.responses import standard_response
 router = APIRouter(prefix='/ai-agent')
 
 
-@router.get('/{id}', response_model=StandardResponse)
+@router.get('/{article_id}', response_model=StandardResponse)
 async def article_analysis(
-	id: int,
+	article_id: int,
 	db: AsyncSession = Depends(get_db),
 	user: StandardResponse = Depends(logged_in),
 ):
@@ -27,6 +27,6 @@ async def article_analysis(
 		success,
 		message,
 		data,
-	) = await agent_usecase.get_from_ai(db=db, id=id)
+	) = await agent_usecase.get_from_ai(db=db, id=article_id)
 
 	return standard_response(status_code, success, message, data)

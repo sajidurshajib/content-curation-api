@@ -45,9 +45,9 @@ logs:
 shell:
 	docker compose -f $(DOCKER_COMPOSE_FILE) run --rm $(SERVICE_NAME) sh
 
-# Seed
-seed:
-	docker compose exec -it $(SERVICE_NAME) /scripts/seeder.sh
+# Seed command: make cli seed=roles
+cli:
+	docker compose exec -it $(SERVICE_NAME) python app/cli.py $(seed)
 
 
 # For Formatting and linting tasks
