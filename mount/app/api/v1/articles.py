@@ -79,7 +79,9 @@ async def get_articles(
 		success,
 		message,
 		data,
-	) = await article_usecase.get_articles(db=db, id=id, user_id=user_data['data']['id'])
+	) = await article_usecase.get_articles(
+		db=db, id=id, user_id=user_data['data']['id']
+	)
 	return standard_response(status_code, success, message, data)
 
 

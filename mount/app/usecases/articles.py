@@ -123,11 +123,11 @@ async def get_articles(
 				).model_dump_json(),
 			)
 		return (
-				status.HTTP_404_NOT_FOUND,
-				False,
-				f'Article with id {id} not found',
-				None,
-			)
+			status.HTTP_404_NOT_FOUND,
+			False,
+			f'Article with id {id} not found',
+			None,
+		)
 	except Exception as e:
 		logger.error(f'Error retrieving articles: {e}')
 		return (
