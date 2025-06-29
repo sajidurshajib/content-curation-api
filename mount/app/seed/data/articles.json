@@ -1,0 +1,62 @@
+[
+  {
+    "title": "Government Announces Major Cabinet Reshuffle",
+    "slug": "government-announces-major-cabinet-reshuffle",
+    "content": "In a surprise move, the Prime Minister has announced a major reshuffle in the cabinet, appointing new ministers to key positions in an effort to boost public confidence and administrative efficiency.",
+    "category_id": 1
+  },
+  {
+    "title": "Opposition Demands Electoral Reforms Ahead of National Vote",
+    "slug": "opposition-demands-electoral-reforms",
+    "content": "The opposition coalition has called for urgent reforms to the national electoral process, citing concerns over transparency and fairness ahead of the upcoming general elections.",
+    "category_id": 1
+  },
+  {
+    "title": "Parliament Debates New Anti-Corruption Bill",
+    "slug": "parliament-debates-anti-corruption-bill",
+    "content": "Lawmakers gathered in parliament today to debate the provisions of a newly proposed anti-corruption bill aimed at strengthening institutional accountability and increasing penalties for misconduct.",
+    "category_id": 1
+  },
+  {
+    "title": "President Addresses Nation Amid Political Tensions",
+    "slug": "president-addresses-nation-political-tensions",
+    "content": "In a televised address, the President called for unity and dialogue amidst growing political tensions, emphasizing the importance of democratic values and national stability.",
+    "category_id": 1
+  },
+  {
+    "title": "Stock Market Sees Record High Amid Economic Optimism",
+    "slug": "stock-market-record-high-economic-optimism",
+    "content": "The national stock exchange hit a record high today, driven by investor confidence and strong earnings reports across multiple sectors, particularly in finance and technology.",
+    "category_id": 2
+  },
+  {
+    "title": "Central Bank Raises Interest Rates to Tackle Inflation",
+    "slug": "central-bank-raises-interest-rates",
+    "content": "In a move aimed at curbing rising inflation, the central bank announced an increase in interest rates, signaling tighter monetary policy in the coming months.",
+    "category_id": 2
+  },
+  {
+    "title": "Local Startup Secures $10M in Series A Funding",
+    "slug": "local-startup-secures-series-a-funding",
+    "content": "A rapidly growing fintech startup has raised $10 million in Series A funding from a group of international investors, aiming to expand its services across Southeast Asia.",
+    "category_id": 2
+  },
+  {
+    "title": "Retail Giant to Open 50 New Stores Nationwide",
+    "slug": "retail-giant-new-stores-expansion",
+    "content": "One of the country’s largest retail chains announced a major expansion plan, including the launch of 50 new outlets, which is expected to create thousands of new jobs.",
+    "category_id": 2
+  },
+  {
+    "title": "AI Startups Disrupt Traditional Industries with New Innovations",
+    "slug": "ai-startups-disrupt-industries",
+    "content": "Artificial Intelligence startups are rapidly transforming sectors like healthcare, logistics, and finance by introducing automation and predictive analytics, prompting legacy companies to adapt or fall behind.",
+    "category_id": 3
+  },
+  {
+    "title": "Tech Giants Invest Billions in Quantum Computing Research",
+    "slug": "tech-giants-invest-in-quantum-computing",
+    "content": "Leading tech firms have committed massive investments toward advancing quantum computing, with the goal of solving complex problems beyond the reach of classical machines.",
+    "category_id": 3
+  }
+]
