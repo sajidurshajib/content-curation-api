@@ -29,6 +29,7 @@ class ArticleRepository(BaseRepository[Article]):
 					joinedload(self.model.author),
 					joinedload(self.model.category),
 				)
+				.filter(self.model.status == 'published')
 			)
 			if keys is not None and len(keys) > 0:
 				query = query.filter(self.model.title.ilike(f'%{keys}%'))

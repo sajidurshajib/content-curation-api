@@ -67,13 +67,19 @@ async def create_article(
 async def get_articles(
 	id: int,
 	db: AsyncSession = Depends(get_db),
+	user: StandardResponse = Depends(logged_in),
 ):
+	user_status_code, user_success, user_message, user_data = user
+	if not user_success:
+		return standard_response(
+			user_status_code, user_success, user_message, user_data
+		)
 	(
 		status_code,
 		success,
 		message,
 		data,
-	) = await article_usecase.get_articles(db=db, id=id)
+	) = await article_usecase.get_articles(db=db, id=id, user_id=user_data['data']['id'])
 	return standard_response(status_code, success, message, data)
 
 

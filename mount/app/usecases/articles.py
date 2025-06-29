@@ -100,6 +100,7 @@ async def create_article(
 async def get_articles(
 	db: AsyncSession,
 	id: int,
+	user_id: int,
 ):
 	article_repo = ArticleRepository(db)
 	try:
@@ -111,15 +112,22 @@ async def get_articles(
 				f'Article with id {id} not found',
 				None,
 			)
+		# If his post or published post
+		if article.author_id == user_id or article.status == 'published':
+			return (
+				status.HTTP_200_OK,
+				True,
+				'Article retrieved successfully',
+				ArticleWithCatId.model_validate(
+					article.__dict__.copy()
+				).model_dump_json(),
+			)
 		return (
-			status.HTTP_200_OK,
-			True,
-			'Article retrieved successfully',
-			ArticleWithCatId.model_validate(
-				article.__dict__.copy()
-			).model_dump_json(),
-		)
-
+				status.HTTP_404_NOT_FOUND,
+				False,
+				f'Article with id {id} not found',
+				None,
+			)
 	except Exception as e:
 		logger.error(f'Error retrieving articles: {e}')
 		return (
